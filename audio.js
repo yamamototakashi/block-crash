@@ -59,7 +59,11 @@
       switch (type) {
         case 'hit':     this._tone('square', 520, 0.08, 0.07, 880); break;
         case 'tough':   this._tone('square', 280, 0.08, 0.07, 220); break;
-        case 'paddle':  this._tone('triangle', 300, 0.07, 0.07, 420); break;
+        case 'paddle':
+          // Two-layer "pop": low thump + short high click for tactile feel.
+          this._tone('triangle', 520, 0.10, 0.14, 260);
+          this._tone('square', 1100, 0.03, 0.06, 700);
+          break;
         case 'wall':    this._tone('triangle', 220, 0.05, 0.04, 180); break;
         case 'item':
           this._tone('sine', 660, 0.16, 0.09, 1320);
