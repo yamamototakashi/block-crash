@@ -82,12 +82,14 @@
   }
 
   let isPointerDown = false;
+  let lastPointerX = null;
 
   function onPointerDown(e) {
     isPointerDown = true;
+    const cx = canvasXFromClient(e.clientX != null ? e.clientX : (e.touches && e.touches[0].clientX));
+    lastPointerX = cx;
     if (game.state === 'playing') {
-      const cx = canvasXFromClient(e.clientX != null ? e.clientX : (e.touches && e.touches[0].clientX));
-      game.paddle.setTargetCenter(cx);
+      // Do NOT teleport paddle to tap position — only remember origin.
       // Launch ball on tap
       let anyStuck = false;
       for (let i = 0; i < game.balls.length; i++) if (game.balls[i].stuck) { anyStuck = true; break; }
@@ -100,9 +102,13 @@
     if (!isPointerDown) return;
     if (game.state !== 'playing') return;
     const cx = canvasXFromClient(e.clientX != null ? e.clientX : (e.touches && e.touches[0].clientX));
-    game.paddle.setTargetCenter(cx);
+    if (lastPointerX == null) { lastPointerX = cx; return; }
+    const dx = cx - lastPointerX;
+    lastPointerX = cx;
+    // Move paddle relatively by the drag delta.
+    game.paddle.setTargetCenter(game.paddle.targetX + game.paddle.w / 2 + dx);
   }
-  function onPointerUp() { isPointerDown = false; }
+  function onPointerUp() { isPointerDown = false; lastPointerX = null; }
 
   // Touch
   canvas.addEventListener('touchstart', function (e) {
@@ -118,13 +124,11 @@
   canvas.addEventListener('touchend', function (e) { e.preventDefault(); onPointerUp(); }, { passive: false });
   canvas.addEventListener('touchcancel', function () { onPointerUp(); });
 
-  // Mouse
+  // Mouse - drag-only (no teleport, no hover-follow)
   canvas.addEventListener('mousedown', onPointerDown);
   window.addEventListener('mousemove', function (e) {
-    if (game.state !== 'playing') return;
-    // Even without mouse down, follow for responsive desktop play
-    const cx = canvasXFromClient(e.clientX);
-    game.paddle.setTargetCenter(cx);
+    if (!isPointerDown) return;
+    onPointerMove({ clientX: e.clientX });
   });
   window.addEventListener('mouseup', onPointerUp);
 
