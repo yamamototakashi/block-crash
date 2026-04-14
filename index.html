@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no, maximum-scale=1">
+<meta name="theme-color" content="#0b0b17">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Block Crash">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icon.svg">
+<title>Block Crash</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div id="app">
+  <div id="stage">
+    <canvas id="canvas" width="400" height="640"></canvas>
+
+    <!-- Title -->
+    <section class="overlay" id="titleScreen">
+      <div class="title-logo">
+        <span class="t1">BLOCK</span>
+        <span class="t2">CRASH</span>
+      </div>
+      <div class="tagline">軽快に崩せ。</div>
+      <div class="mode-grid">
+        <button class="mode-btn classic" data-mode="CLASSIC">
+          <span class="mode-name">CLASSIC</span>
+          <span class="mode-desc">王道のブロック崩し</span>
+        </button>
+        <button class="mode-btn rainbow" data-mode="RAINBOW">
+          <span class="mode-name">RAINBOW</span>
+          <span class="mode-desc">連鎖でボーナス</span>
+        </button>
+        <button class="mode-btn chaos" data-mode="CHAOS">
+          <span class="mode-name">CHAOS</span>
+          <span class="mode-desc">ときどき変則ギミック</span>
+        </button>
+        <button class="mode-btn puzzle" data-mode="PUZZLE">
+          <span class="mode-name">PUZZLE</span>
+          <span class="mode-desc">考えて崩す</span>
+        </button>
+      </div>
+      <div class="sub-buttons">
+        <button id="howtoBtn" class="sub-btn">あそびかた</button>
+        <button id="soundToggle" class="sub-btn">♪ ON</button>
+      </div>
+      <div class="footer">iPhoneはホーム画面に追加するとフル画面で遊べます</div>
+    </section>
+
+    <!-- How to -->
+    <section class="overlay hidden" id="howtoScreen">
+      <h2>あそびかた</h2>
+      <ul class="howto">
+        <li><b>🎯 パドル操作</b><br>画面下をなぞって動かす / マウス左右</li>
+        <li><b>🚀 ボール発射</b><br>画面を一度タップ</li>
+        <li><b>🧱 目標</b><br>通常ブロックを全部壊してクリア</li>
+        <li><b>💎 カプセル</b><br>拾うとパワーアップ（増加・拡大・炎・レーザー等）</li>
+        <li><b>🌈 RAINBOW</b><br>同色を連続で割るとスコア倍率UP</li>
+        <li><b>⏸ ポーズ</b><br>右上のボタン</li>
+      </ul>
+      <button class="primary-btn" id="howtoBackBtn">もどる</button>
+    </section>
+
+    <!-- Stage clear -->
+    <section class="overlay hidden" id="clearScreen">
+      <h2 class="clear-title">STAGE CLEAR!</h2>
+      <div class="score-display">
+        <div><span>SCORE</span><strong id="clearScore">0</strong></div>
+        <div><span>STAGE</span><strong id="clearStage">1</strong></div>
+      </div>
+      <button class="primary-btn" id="nextBtn">NEXT →</button>
+      <button class="secondary-btn" id="clearTitleBtn">タイトルへ</button>
+    </section>
+
+    <!-- Game over -->
+    <section class="overlay hidden" id="overScreen">
+      <h2 class="over-title">GAME OVER</h2>
+      <div class="score-display">
+        <div><span>SCORE</span><strong id="overScore">0</strong></div>
+      </div>
+      <button class="primary-btn" id="retryBtn">もう一度</button>
+      <button class="secondary-btn" id="overTitleBtn">タイトルへ</button>
+    </section>
+
+    <!-- All clear -->
+    <section class="overlay hidden" id="allClearScreen">
+      <h2 class="clear-title">ALL CLEAR 🏆</h2>
+      <div class="score-display">
+        <div><span>SCORE</span><strong id="allClearScore">0</strong></div>
+      </div>
+      <button class="primary-btn" id="allClearRetryBtn">もう一度</button>
+      <button class="secondary-btn" id="allClearTitleBtn">タイトルへ</button>
+    </section>
+
+    <!-- Pause -->
+    <section class="overlay hidden" id="pauseScreen">
+      <h2>PAUSED</h2>
+      <button class="primary-btn" id="resumeBtn">つづける</button>
+      <button class="secondary-btn" id="pauseTitleBtn">タイトルへ</button>
+    </section>
+
+    <button id="pauseBtn" class="icon-btn hidden" aria-label="pause">❚❚</button>
+  </div>
+</div>
+
+<script src="stages.js"></script>
+<script src="audio.js"></script>
+<script src="engine.js"></script>
+<script src="game.js"></script>
+<script src="main.js"></script>
+<script>
+  // Register service worker only when served via http(s). file:// will silently skip.
+  if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('sw.js').catch(() => {});
+    });
+  }
+</script>
+</body>
+</html>
